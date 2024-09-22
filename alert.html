@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="alert.css">
+</head>
+<body>
+
+    <button id="tora-alert-type">show the modal</button>
+    <div id="tora-modal">
+        <div id="tora-modal-content">
+            <p id="tora-modal-title"></p>
+            <p id="tora-modal-text"></p>
+            <div class="tora-button-container">
+                <button id="tora-modal-button"></button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { toraModalCall } from './tora-modal.js';
+        toraModalCall(
+            'title',
+            'message',
+            'close.',
+        );
+    </script>
+
+</body>
+</html>
