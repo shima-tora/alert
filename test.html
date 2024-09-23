@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Line with noUiSlider</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.css" />
+    <style>
+        .slider { margin: 20px; position: relative; }
+        canvas { position: absolute; pointer-events: none; top: 0; left: 0; }
+    </style>
+</head>
+<body>
+
+<div id="sliders"></div>
+<canvas id="lineCanvas"></canvas>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.js"></script>
+<script>
+    const sliders = [...Array(5)].map(() => {
+        const slider = document.createElement('div');
+        slider.className = 'slider';
+        document.getElementById('sliders').appendChild(slider);
+        noUiSlider.create(slider, { start: [20, 80], connect: true, range: { min: 0, max: 100 } });
+        return slider;
+    });
+
+    const canvas = document.getElementById('lineCanvas');
+    const ctx = canvas.getContext('2d');
+    const midHandles = sliders.map(slider => slider.getElementsByClassName('noUi-handle')[1]);
+
+    function drawLines() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = 'red';
+        ctx.lineWidth = 2;
+
+        midHandles.forEach((handle, index) => {
+            const rect = handle.getBoundingClientRect();
+            const x = rect.left + rect.width / 2;
+            const y = rect.top + rect.height / 2;
+
+            if (index > 0) {
+                const prevRect = midHandles[index - 1].getBoundingClientRect();
+                ctx.beginPath();
+                ctx.moveTo(prevRect.left + prevRect.width / 2, prevRect.top + prevRect.height / 2);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            }
+        });
+    }
+
+    function resizeCanvas() {
+        const { width, height } = document.getElementById('sliders').getBoundingClientRect();
+        canvas.width = width;
+        canvas.height = height;
+        drawLines();
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    sliders.forEach(slider => slider.noUiSlider.on('update', drawLines));
+    resizeCanvas();
+</script>
+
+</body>
+</html>
